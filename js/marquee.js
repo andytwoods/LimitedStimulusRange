@@ -5,7 +5,6 @@ d3.marquee = function() {
         closePathSelect = true,
         isPathClosed = false,
         hoverSelect = true,
-        points = [],
         area = null,
         on = {start:function(){}, draw: function(){}, end: function(){}};
 
@@ -37,6 +36,14 @@ d3.marquee = function() {
         var origin_node = g.append("circle")
             .attr("class","origin");
 
+        // add a final node
+        var final_node = g.append("circle")
+            .attr("class","final");
+
+        // add a rect
+        var lasso = g.append("rect")
+            .attr("class","lasso");
+
         // The marquee path for calculations
         var path;
 
@@ -48,6 +55,10 @@ d3.marquee = function() {
 
         // The transformed marquee origin for rendering
         var torigin;
+
+        var final;
+        var tfinal;
+        var rect;
 
         // The last known point on the marquee during drag - needed for evaluating edges
         var last_known_point;
@@ -70,6 +81,7 @@ d3.marquee = function() {
             tpath = "";
             dyn_path.attr("d",null);
             close_path.attr("d",null);
+            rect = null;
 
             // Set path length start
             path_length_start = 0;
@@ -115,6 +127,8 @@ d3.marquee = function() {
                 tpath = tpath + "M " + tx + " " + ty;
                 origin = [x,y];
                 torigin = [tx,ty];
+                final = [x,y];
+                tfinal = [tx, ty];
                 // Draw origin node
                 origin_node
                     .attr("cx",tx)
@@ -125,6 +139,21 @@ d3.marquee = function() {
             else {
                 path = path + " L " + x + " " + y;
                 tpath = tpath + " L " + tx + " " + ty;
+                final = [x,y];
+                tfinal = [tx, ty];
+
+
+                final_node
+                    .attr("cx",tx)
+                    .attr("cy",ty)
+                    .attr("r",7)
+                    .attr("display",null);
+
+                lasso
+                    .attr("cx",tx)
+                    .attr("cy",ty)
+                    .attr("width",x-origin[0])
+                    .attr("height",y-origin[1]);
             }
 
             // Reset closed edges counter
