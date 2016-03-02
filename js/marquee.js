@@ -142,18 +142,28 @@ d3.marquee = function() {
                 final = [x,y];
                 tfinal = [tx, ty];
 
-
                 final_node
                     .attr("cx",tx)
                     .attr("cy",ty)
                     .attr("r",7)
                     .attr("display",null);
 
+
+                //lasso
+                var lassoX,lassoY,lassoWidth,lassoHeight;
+
+                if(x>torigin[0]){lassoX = torigin[0]; lassoWidth=x;}
+                else{ lassoX= x; lassoWidth = torigin[0];}
+
+                if(y>torigin[1]){lassoY = torigin[1]; lassoHeight=x;}
+                else{ lassoY= y; lassoHeight = torigin[1];}
+
+
                 lasso
-                    .attr("cx",tx)
-                    .attr("cy",ty)
-                    .attr("width",x-origin[0])
-                    .attr("height",y-origin[1]);
+                    .attr("x",lassoX)
+                    .attr("y",lassoY)
+                    .attr("width",lassoWidth)
+                    .attr("height",lassoHeight)
             }
 
             // Reset closed edges counter
