@@ -41,8 +41,11 @@ d3.marquee = function() {
             .attr("class","final");
 
         // add a rect
-        var lasso = g.append("rect")
-            .attr("class","lasso");
+        var lasso = g.append("polygon")
+            .style("stroke-dasharray", ("2,2"))
+            .style("stroke", "grey")
+            .style("fill", "grey")
+            .style("fill-opacity", .2);
 
         // The marquee path for calculations
         var path;
@@ -150,20 +153,8 @@ d3.marquee = function() {
 
 
                 //lasso
-                var lassoX,lassoY,lassoWidth,lassoHeight;
-
-                if(x>torigin[0]){lassoX = torigin[0]; lassoWidth=x;}
-                else{ lassoX= x; lassoWidth = torigin[0];}
-
-                if(y>torigin[1]){lassoY = torigin[1]; lassoHeight=x;}
-                else{ lassoY= y; lassoHeight = torigin[1];}
-
-
                 lasso
-                    .attr("x",lassoX)
-                    .attr("y",lassoY)
-                    .attr("width",lassoWidth)
-                    .attr("height",lassoHeight)
+                    .attr("points", [tx,ty,tx,torigin[1],torigin[0],torigin[1],torigin[0],ty].join(','));  // x,y points
             }
 
             // Reset closed edges counter
