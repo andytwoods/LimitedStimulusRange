@@ -38,7 +38,7 @@ d3.marquee = function() {
 
         // add a final node
         var final_node = g.append("circle")
-            .attr("class","final");
+            .attr("class","origin");
 
         // add a rect
         var lasso = g.append("polygon")
@@ -325,7 +325,7 @@ d3.marquee = function() {
             dyn_path.attr("d",null);
             close_path.attr("d",null);
             origin_node.attr("display","none");
-
+            final_node.attr("display","none");
             // Run user defined end function
             on.end();
 
