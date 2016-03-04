@@ -1,9 +1,6 @@
 d3.marquee = function() {
 
     var items = null,
-        closePathDistance = 75,
-        closePathSelect = true,
-        isPathClosed = false,
         hoverSelect = true,
         area = null,
         on = {start:function(){}, draw: function(){}, end: function(){}};
@@ -116,6 +113,15 @@ d3.marquee = function() {
             on.start();
         }
 
+        //when relative size of a and b not known
+        function is_between(n,a,b){
+            if(a<b){
+                return n>a && n<b;
+            }
+            return n<a && n>b;
+
+        }
+
         function dragmove() {
             // Get mouse position within body, used for calculations
             var x = d3.event.sourceEvent.clientX;
@@ -157,62 +163,29 @@ d3.marquee = function() {
                     .attr("points", [tx,ty,tx,torigin[1],torigin[0],torigin[1],torigin[0],ty].join(','));  // x,y points
             }
 
-            // Reset closed edges counter
             items[0].forEach(function(d) {
-                d.marqueePoint.close_edges = {left:0,right:0};
+                if(is_between(d.marqueePoint.cx, x, origin[0]) && is_between(d.marqueePoint.cy, y, origin[1])){
+                    //d.loopSelected = true;
+                    //d.selected = true;
+                    d.possible = true;
+
+                }
+                else{
+                    //console.log(11);
+                    //d.loopSelected = false;
+                    //d.selected = false;
+                    //d.possible = false;
+                }
+                //d.marqueePoint.close_edges = {left:0,right:0};
             });
 
-            // Calculate the current distance from the marquee origin
-            var distance = Math.sqrt(Math.pow(x-origin[0],2)+Math.pow(y-origin[1],2));
-
-            // Set the closed path line
-            var close_draw_path = "M " + tx + " " + ty + " L " + torigin[0] + " " + torigin[1];
-
-            // Set the calc closed path line
-            var calc_close_draw_path = "M " + x + " " + y + " L " + origin[0] + " " + origin[1];
-
-            // Draw the lines
-            dyn_path.attr("d",tpath);
-
-            // path for calcs
-            calc_path.attr("d",path);
-
-            calc_close_path.attr("d",calc_close_draw_path);
-
-            // Check if the path is closed
-            isPathClosed = distance<=closePathDistance ? true : false;
-
-            // If within the closed path distance parameter, show the closed path. otherwise, hide it
-            if(isPathClosed) {
-                close_path.attr("display",null);
-            }
-            else {
-                close_path.attr("display","none");
-            }
 
 
-            // Get path length
-            var path_node = calc_path.node();
-            var path_length_end = path_node.getTotalLength();
-            // Get the ending point of the path
-            var last_pos = path_node.getPointAtLength(path_length_start-1);
 
-            // Iterate through each point on the path
-            for (var i = path_length_start; i<=path_length_end; i++) {
-                // Get the current coordinates on the path
-                var cur_pos = path_node.getPointAtLength(i);
-                var cur_pos_obj = {
-                    x:Math.round(cur_pos.x*100)/100,
-                    y:Math.round(cur_pos.y*100)/100,
-                };
-                // Get the prior coordinates on the path
-                var prior_pos = path_node.getPointAtLength(i-1);
-                var prior_pos_obj = {
-                    x:Math.round(prior_pos.x*100)/100,
-                    y:Math.round(prior_pos.y*100)/100,
-                };
 
-                // Iterate through each item
+
+
+            /*    // Iterate through each item
                 items[0].filter(function(d) {
                     var a;
                     // If we are on the same y position as the item and we weren't on this y before,
@@ -291,19 +264,17 @@ d3.marquee = function() {
                 items[0].forEach(function(d) {
                     d.loopSelected = false;
                 });
-            }
+            }*/
 
             // Tag possible items
-            d3.selectAll(items[0].filter(function(d) {return (d.loopSelected && isPathClosed) || d.hoverSelected;}))
+           /* d3.selectAll(items[0].filter(function(d) {return (d.loopSelected && isPathClosed) || d.hoverSelected;}))
                 .each(function(d) { d.possible = true;});
 
             d3.selectAll(items[0].filter(function(d) {return !((d.loopSelected && isPathClosed) || d.hoverSelected);}))
                 .each(function(d) {d.possible = false;});
+            */
+                on.draw();
 
-            on.draw();
-
-            // Continue drawing path from where it left off
-            path_length_start = path_length_end+1;
         }
 
         function dragend() {
@@ -342,7 +313,6 @@ d3.marquee = function() {
                 item.datum({possible:false,selected:false});
             }
             else {
-                //item.attr("d",function(e) {e.possible = false; e.selected = false; return e;});
                 var e = item.datum();
                 e.possible = false;
                 e.selected = false;
@@ -352,23 +322,7 @@ d3.marquee = function() {
         return marquee;
     };
 
-    marquee.closePathDistance  = function(_) {
-        if (!arguments.length) return closePathDistance;
-        closePathDistance = _;
-        return marquee;
-    };
 
-    marquee.closePathSelect = function(_) {
-        if (!arguments.length) return closePathSelect;
-        closePathSelect = _===true ? true : false;
-        return marquee;
-    };
-
-    marquee.isPathClosed = function(_) {
-        if (!arguments.length) return isPathClosed;
-        isPathClosed = _===true ? true : false;
-        return marquee;
-    };
 
     marquee.hoverSelect = function(_) {
         if (!arguments.length) return hoverSelect;
@@ -391,10 +345,6 @@ d3.marquee = function() {
         area=_;
         return marquee;
     };
-
-    function sign(x) {
-        return x?x<0?-1:1:0;
-    }
 
 
     return marquee;

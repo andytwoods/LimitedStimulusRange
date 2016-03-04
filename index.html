@@ -104,7 +104,10 @@
 
     var marquee_draw = function() {
         // Style the possible dots
-        marquee.items().filter(function(d) {return d.possible===true})
+
+        marquee.items().filter(function(d) {
+            console.log(d.possible)
+            return d.possible===true})
                 .classed({"not_possible":false,"possible":true});
 
         // Style the not possible dot
@@ -137,8 +140,7 @@
 
     // Define the marquee
     var marquee = d3.marquee()
-            .closePathDistance(75) // max distance for the marquee loop to be closed
-            .closePathSelect(true) // can items be selected by closing the path?
+
             .hoverSelect(true) // can items by selected by hovering over them?
             .area(marquee_area) // area where the marquee can be started
             .on("start",marquee_start) // marquee start function
