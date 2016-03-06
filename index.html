@@ -104,9 +104,8 @@
 
     var marquee_draw = function() {
         // Style the possible dots
-
+        var total = 0
         marquee.items().filter(function(d) {
-            console.log(d.possible)
             return d.possible===true})
                 .classed({"not_possible":false,"possible":true});
 

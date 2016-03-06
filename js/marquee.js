@@ -165,115 +165,21 @@ d3.marquee = function() {
 
             items[0].forEach(function(d) {
                 if(is_between(d.marqueePoint.cx, x, origin[0]) && is_between(d.marqueePoint.cy, y, origin[1])){
-                    //d.loopSelected = true;
-                    //d.selected = true;
-                    d.possible = true;
-
+                    d.loopSelected = true;
                 }
                 else{
-                    //console.log(11);
-                    //d.loopSelected = false;
-                    //d.selected = false;
-                    //d.possible = false;
+                    d.loopSelected = false;
                 }
-                //d.marqueePoint.close_edges = {left:0,right:0};
             });
 
 
-
-
-
-
-
-            /*    // Iterate through each item
-                items[0].filter(function(d) {
-                    var a;
-                    // If we are on the same y position as the item and we weren't on this y before,
-                    // mark as the last known point. Return false - we don't need to count an edge yet
-                    if(d.marqueePoint.cy === cur_pos_obj.y && d.marqueePoint.cy != prior_pos_obj.y) {
-                        last_known_point = {
-                            x: prior_pos_obj.x,
-                            y: prior_pos_obj.y
-                        };
-                        a=false;
-                    }
-                    // If we are on the same y position as the item and we were on this y before,
-                    // return false - we don't need to count an edge yet
-                    else if (d.marqueePoint.cy === cur_pos_obj.y && d.marqueePoint.cy === prior_pos_obj.y) {
-                        a = false;
-                    }
-                    // If we are not on the same y position as the item but we were previously,
-                    // determine if we passed by the item or came up to it and turned around.
-                    // Return true if we passed it so that we can evaluate for an edge
-                    else if (d.marqueePoint.cy != cur_pos_obj.y && d.marqueePoint.cy === prior_pos_obj.y) {
-                        a = sign(d.marqueePoint.cy-cur_pos_obj.y)!=sign(d.marqueePoint.cy-last_known_point.y);
-                    }
-                    // Else, mark a last known point and check for a crossing.
-                    // If we crossed, we need to evaluate for edges
-                    else {
-                        last_known_point = {
-                            x: prior_pos_obj.x,
-                            y: prior_pos_obj.y
-                        };
-                        a = sign(d.marqueePoint.cy-cur_pos_obj.y)!=sign(d.marqueePoint.cy-prior_pos_obj.y);
-                    }
-                    return a;
-                }).forEach(function(d) {
-                    // Iterate through each object and add an edge to the left or right
-                    if(cur_pos_obj.x>d.marqueePoint.cx) {
-                        d.marqueePoint.edges.right = d.marqueePoint.edges.right+1;
-                    }
-                    if(cur_pos_obj.x<d.marqueePoint.cx) {
-                        d.marqueePoint.edges.left = d.marqueePoint.edges.left+1;
-                    }
-                });
-            }
-
-            // If the path is closed and close select is set to true, draw the closed paths and count edges
-            if(isPathClosed === true && closePathSelect === true) {
-                close_path.attr("d",close_draw_path);
-                close_path_node =calc_close_path.node();
-                var close_path_length = close_path_node.getTotalLength();
-                var close_path_edges = {left:0,right:0};
-                for (var i = 0; i<=close_path_length; i++) {
-                    var cur_pos = close_path_node.getPointAtLength(i);
-                    var prior_pos = close_path_node.getPointAtLength(i-1);
-
-                    items[0].filter(function(d) {return d.marqueePoint.cy==Math.round(cur_pos.y);}).forEach(function(d) {
-                        if(Math.round(cur_pos.y)!=Math.round(prior_pos.y) && Math.round(cur_pos.x)>d.marqueePoint.cx) {
-                            d.marqueePoint.close_edges.right = 1;
-                        }
-                        if(Math.round(cur_pos.y)!=Math.round(prior_pos.y) && Math.round(cur_pos.x)<d.marqueePoint.cx) {
-                            d.marqueePoint.close_edges.left = 1;
-                        }
-                    });
-
-                }
-
-                // Check and see if the points have at least one edge to the left, and an odd # of edges to the right. If so, mark as selected.
-                items[0].forEach(function(a) {
-                    if((a.marqueePoint.edges.left+a.marqueePoint.close_edges.left)>0 && (a.marqueePoint.edges.right + a.marqueePoint.close_edges.right)%2 ==1) {
-                        a.loopSelected = true;
-                    }
-                    else {
-                        a.loopSelected = false;
-                    }
-                });
-            }
-            else {
-                items[0].forEach(function(d) {
-                    d.loopSelected = false;
-                });
-            }*/
-
-            // Tag possible items
-           /* d3.selectAll(items[0].filter(function(d) {return (d.loopSelected && isPathClosed) || d.hoverSelected;}))
-                .each(function(d) { d.possible = true;});
-
-            d3.selectAll(items[0].filter(function(d) {return !((d.loopSelected && isPathClosed) || d.hoverSelected);}))
+            d3.selectAll(items[0].filter(function(d) {return d.loopSelected;}))
+                .each(function(d) {d.possible = true;});
+            d3.selectAll(items[0].filter(function(d) {return !d.loopSelected;}))
                 .each(function(d) {d.possible = false;});
-            */
-                on.draw();
+
+
+            on.draw();
 
         }
 
@@ -304,7 +210,6 @@ d3.marquee = function() {
     }
 
     marquee.items  = function(_) {
-
         if (!arguments.length) return items;
         items = _;
         items[0].forEach(function(d) {
