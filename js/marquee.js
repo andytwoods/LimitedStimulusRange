@@ -13,21 +13,7 @@ d3.marquee = function() {
         var g = _this.append("g")
             .attr("class","marquee");
 
-        // add the drawn path for the marquee
-        var dyn_path = g.append("path")
-            .attr("class","drawn");
 
-        // add a path used for calculations
-        var calc_path = g.append("path")
-            .attr("display","none");
-
-        // add a closed path
-        var close_path = g.append("path")
-            .attr("class","loop_close");
-
-        // add a close path used for calculations
-        var calc_close_path = g.append("path")
-            .attr("display","none");
 
         // add an origin node
         var origin_node = g.append("circle")
@@ -44,11 +30,9 @@ d3.marquee = function() {
             .style("fill", "grey")
             .style("fill-opacity", .2);
 
-        // The marquee path for calculations
-        var path;
 
-        // The transformed marquee path for rendering
-        var tpath;
+        //used when setting up the marquee
+        var doDraw = false
 
         // The marquee origin for calculations
         var origin;
@@ -63,8 +47,6 @@ d3.marquee = function() {
         // The last known point on the marquee during drag - needed for evaluating edges
         var last_known_point;
 
-        // The starting point for evaluating the path
-        var path_length_start;
 
         // Apply drag behaviors
         var drag = d3.behavior.drag()
@@ -77,14 +59,9 @@ d3.marquee = function() {
 
         function dragstart() {
             // Initialize paths
-            path="";
-            tpath = "";
-            dyn_path.attr("d",null);
-            close_path.attr("d",null);
+
             rect = null;
 
-            // Set path length start
-            path_length_start = 0;
 
             // Set every item to have a false selection and reset their center point and counters
             items[0].forEach(function(d) {
@@ -131,9 +108,8 @@ d3.marquee = function() {
             var ty = d3.mouse(this)[1];
 
             // Initialize the path or add the latest point to it
-            if (path==="") {
-                path = path + "M " + x + " " + y;
-                tpath = tpath + "M " + tx + " " + ty;
+            if (doDraw===false) {
+                doDraw = true
                 origin = [x,y];
                 torigin = [tx,ty];
                 final = [x,y];
@@ -146,8 +122,7 @@ d3.marquee = function() {
                     .attr("display",null);
             }
             else {
-                path = path + " L " + x + " " + y;
-                tpath = tpath + " L " + tx + " " + ty;
+
                 final = [x,y];
                 tfinal = [tx, ty];
 
@@ -199,11 +174,11 @@ d3.marquee = function() {
                 .each(function(d) {d.possible = false;});
 
             // Clear marquee
-            dyn_path.attr("d",null);
-            close_path.attr("d",null);
+
             origin_node.attr("display","none");
             final_node.attr("display","none");
             // Run user defined end function
+            doDraw = false
             on.end();
 
         }
