@@ -4,7 +4,22 @@ var RegressionLine = function(){
 
     var api = {};
 
-    api.make = function(svg, xSeries, ySeries, decimalFormat ){
+    api.make = function(svg, dots, decimalFormat ){
+
+        var xSeries = [];
+        var ySeries = [];
+
+        var dot;
+        for(var i = 0; i<dots.length;i++){
+            dot = dots[i];
+           console.log(d3.transform(dot.attr("transform")).translate[0] );
+
+           // xSeries.push(dot.attributes.cx);
+           // ySeries.push(dot.attributes.cy);
+        }
+return;
+        console.log(xSeries,222)
+
 
         var leastSquaresCoeff = leastSquares(xSeries, ySeries);
 
@@ -68,4 +83,4 @@ var RegressionLine = function(){
     }
 
     return api;
-}
+}();
