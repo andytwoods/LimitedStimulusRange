@@ -10,18 +10,19 @@ var RegressionLine = function(){
         var ySeries = [];
 
         var dot;
-        for(var i = 0; i<dots.length;i++){
-            dot = dots[i];
-           console.log(d3.transform(dot.attr("transform")).translate[0] );
 
-           // xSeries.push(dot.attributes.cx);
-           // ySeries.push(dot.attributes.cy);
+        for(var i = 0; i<dots[0].length;i++){
+            circle = dots[0][i];
+            xSeries.push(circle.getAttribute('cx'));
+            ySeries.push(circle.getAttribute('cy'));
         }
-return;
-        console.log(xSeries,222)
+
+
 
 
         var leastSquaresCoeff = leastSquares(xSeries, ySeries);
+
+
 
         // apply the reults of the least squares regression
         var x1 = xSeries[0];

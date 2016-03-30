@@ -66,6 +66,7 @@
 <h1>Hello, world!!!</h1>
 <script src="js/d3.min.js"></script>
 <script src = "js/marquee.js"></script>
+<script src = "js/RegressionLine.js"></script>
 <script>
 
     var margin = {top: 20, right: 20, bottom: 30, left: 40},
@@ -120,14 +121,17 @@
                 .style("fill", function(d) { return color(d.species); });
 
         // Style the selected dots
-        marquee.items().filter(function(d) {return d.selected===true})
-                .classed({"not_possible":false,"possible":false})
+        var selected = marquee.items().filter(function(d) {return d.selected===true})
+
+        selected.classed({"not_possible":false,"possible":false})
                 .attr("r",7);
 
         // Reset the style of the not selected dots
         marquee.items().filter(function(d) {return d.selected===false})
                 .classed({"not_possible":false,"possible":false})
                 .attr("r",3.5);
+
+        RegressionLine.make(svg, selected)
 
     };
 
