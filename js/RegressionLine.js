@@ -4,27 +4,43 @@ var RegressionLine = function(){
 
     var api = {};
 
-    api.make = function(svg, dots, decimalFormat ){
+    function ascending(a,b) { return a - b;};
+
+    api.make = function(svg, dots, decimalFormat, margin ){
 
         var xSeries = [];
         var ySeries = [];
 
         var dot;
+        var circle;
 
+
+        var cx, cy;
         for(var i = 0; i<dots[0].length;i++){
             circle = dots[0][i];
-            xSeries.push(circle.getAttribute('cx'));
-            ySeries.push(circle.getAttribute('cy'));
+            cx = parseFloat(circle.getAttribute('cx'));
+            cy = parseFloat(circle.getAttribute('cy'));
+            xSeries.push(cx);
+            ySeries.push(cy);
+
         }
 
+        xSeries = xSeries.sort(ascending);
+        ySeries = ySeries.sort(ascending);
 
+        var xScale = d3.scale.ordinal()
+            .rangeRoundBands([margin.left, margin.width], .1);
 
+        var yScale = d3.scale.linear()
+            .range([margin.height, 0]);
 
         var leastSquaresCoeff = leastSquares(xSeries, ySeries);
 
+        // formatters for axis and labels
+        var currencyFormat = d3.format("$0.2f");
+        var decimalFormat = d3.format("0.2f");
 
-
-        // apply the reults of the least squares regression
+        // apply the results of the least squares regression
         var x1 = xSeries[0];
         var y1 = leastSquaresCoeff[0] + leastSquaresCoeff[1];
         var x2 = xSeries[xSeries.length - 1];
@@ -32,7 +48,9 @@ var RegressionLine = function(){
         var trendData = [[x1,y1,x2,y2]];
 
         var trendline = svg.selectAll(".trendline")
-            .data(trendData);
+            .data(trendData[0]);
+
+        console.log(xScale(trendData[0][0]))
 
         trendline.enter()
             .append("line")
@@ -62,13 +80,19 @@ var RegressionLine = function(){
 
     // returns slope, intercept and r-square of the line
     function leastSquares(xSeries, ySeries) {
-        var reduceSumFunc = function(prev, cur) { return prev + cur; };
 
-        var xBar = xSeries.reduce(reduceSumFunc) * 1.0 / xSeries.length;
-        var yBar = ySeries.reduce(reduceSumFunc) * 1.0 / ySeries.length;
+        var reduceSumFunc = function(prev, cur) {
+            if(typeof(cur)=="string") return prev
+            return prev + cur; };
+
+        var xBar = xSeries.reduce(reduceSumFunc) / xSeries.length;
+        var yBar = ySeries.reduce(reduceSumFunc) / ySeries.length;
+
 
         var ssXX = xSeries.map(function(d) { return Math.pow(d - xBar, 2); })
             .reduce(reduceSumFunc);
+
+
 
         var ssYY = ySeries.map(function(d) { return Math.pow(d - yBar, 2); })
             .reduce(reduceSumFunc);
